@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Goods extends Model
 {
+    protected $table = 'goods';
+    
     // Validationの設定
     protected $guarded = array('id');
 
@@ -15,9 +17,8 @@ class Goods extends Model
         'description' => 'required',
     );
     
-    //関連付け
-    public function goods_tags()
+    public function users()
     {
-        return $this->hasMany('App\GoodsTags');
+        return $this->hasOne('App\User','id','user_id');
     }
 }

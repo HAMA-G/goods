@@ -17,3 +17,8 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function(){
+    Route::get('goods/create', 'Admin\GoodsController@add');
+    Route::post('goods/create', 'Admin\GoodsController@create');
+});
