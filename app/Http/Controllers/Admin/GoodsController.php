@@ -7,12 +7,15 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Goods;
 use App\User;
+use App\Tag;
+use App\GoodsTag;
 
 class GoodsController extends Controller
 {
     public function add()
     {
-        return view('admin.goods.create');
+        $tags= Tag::all();
+        return view('admin.goods.create', ['tags' => $tags]);
     }
     
     public function create(Request $request)
@@ -38,6 +41,9 @@ class GoodsController extends Controller
         $goods->fill($form);
         $goods->save();
         
+
+        
+        
         //動作確認のために設定している。今後はメインページに飛ぶように変える
         return redirect('admin/goods/create');
     }
@@ -50,5 +56,13 @@ class GoodsController extends Controller
     public function update()
     {
         return redirect('admin/goods/index');
+    }
+    
+    public function index(Request $request)
+    {
+        $cond_title = $request->cond_title;
+        if($cond_title != ''){
+            $posts = News::where('title', $cond_title)->get();
+        }
     }
 }

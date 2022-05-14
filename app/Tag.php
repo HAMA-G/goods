@@ -12,4 +12,9 @@ class Tag extends Model
     public static $rules = array(
         'name' => 'required',
     );
+    
+    public function goods_tags()
+    {
+        return $this->hasMany('App\GoodsTag');
+    }
 }

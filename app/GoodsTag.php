@@ -8,14 +8,9 @@ class GoodsTag extends Model
 {
     //Validationの設定
     protected $guarded = array('id');
-
-    public static $rules = array(
+    
+    public static $rule = array(
         'goods_id' => 'required',
         'tag_id' => 'required',
     );
-    
-    public function tags()
-    {
-        return $this->hasMany('App\Tag');
-    }
 }

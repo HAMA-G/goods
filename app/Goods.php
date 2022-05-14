@@ -17,8 +17,13 @@ class Goods extends Model
         'description' => 'required',
     );
     
-    public function users()
+    public function tags()
     {
-        return $this->hasOne('App\User','id','user_id');
+        return $this->hasMany('App\Tag');
+    }
+    
+    public function goods_tags()
+    {
+        return $this->hasMany('App\GoodsTag');
     }
 }

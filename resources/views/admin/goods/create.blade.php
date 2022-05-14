@@ -37,11 +37,12 @@
                                     <input type="radio" name="status" value="1" {{ old('status') === '1' ? 'checked' : '' }} />購入済み
                                     <input type="radio" name="status" value="0" {{ old('status') === '0' ? 'checked' : '' }} />未購入
                             </div>
-                            <!--タグの設定は後で考える-->
-                            <!--<div>-->
-                            <!--    <label>タグ</label>-->
-                            <!--        <input type="radio" name="goods_tags"><label>ミッキー</label>-->
-                            <!--</div>-->
+                            <div>
+                                <label>タグ</label>
+                                @foreach($tags as $tag)
+                                    <label><input type="checkbox" name="tag_id" value="{{ $tag->id }}">{{ $tag->name }}</label>
+                                @endforeach
+                            </div>
                             <div>
                                 <label>テキスト</label>
                                     <textarea name="description" rows="20">{{ old('description') }}</textarea>
