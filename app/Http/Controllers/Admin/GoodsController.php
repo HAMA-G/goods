@@ -26,6 +26,9 @@ class GoodsController extends Controller
         $goods = new Goods;
         $form = $request->all();
         
+        // var_dump($form);
+        // exit;
+        
         $goods->user_id = Auth::id();
         
         if(isset($form['image'])) {
@@ -35,13 +38,25 @@ class GoodsController extends Controller
             $goods->image_path = null;
         }
         
+        // $tags = $form['tags'];
+        
         unset($form['_token']);
         unset($form['image']);
+        unset($form['tags']);
         
         $goods->fill($form);
         $goods->save();
         
-
+        $tags = $request->tags;
+        if($tags != null){
+            foreach($tags as $tag){
+                $goods_tag = new GoodsTag();
+                $goods_tag->goods_id = $goods->id;
+                $goods_tag->tag_id = $tag;
+                $goods_tag->save();
+                
+            }
+        }
         
         
         //動作確認のために設定している。今後はメインページに飛ぶように変える
@@ -62,7 +77,10 @@ class GoodsController extends Controller
     {
         $cond_title = $request->cond_title;
         if($cond_title != ''){
-            $posts = News::where('title', $cond_title)->get();
+            $posts = Goods::where('title', $cond_title)->get();
+        }else {
+            $posts = Goods::all();
         }
+        return view('admin.goods.index', ['posts' => $posts, 'cond_title' => $cond_title]);
     }
 }

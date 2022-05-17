@@ -13,4 +13,10 @@ class GoodsTag extends Model
         'goods_id' => 'required',
         'tag_id' => 'required',
     );
+    
+    public function tag()
+    {
+        return $this->hasOne('App\Tag');
+    }
+    
 }

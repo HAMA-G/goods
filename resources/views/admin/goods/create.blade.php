@@ -38,9 +38,9 @@
                                     <input type="radio" name="status" value="0" {{ old('status') === '0' ? 'checked' : '' }} />未購入
                             </div>
                             <div>
-                                <label>タグ</label>
+                                <label>タグ</label><br>
                                 @foreach($tags as $tag)
-                                    <label><input type="checkbox" name="tag_id" value="{{ $tag->id }}">{{ $tag->name }}</label>
+                                    <label><input type="checkbox" name="tags[]" value="{{ $tag->id }}">{{ $tag->name }}</label><br>
                                 @endforeach
                             </div>
                             <div>
