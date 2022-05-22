@@ -42,6 +42,9 @@
                                         <th>{{ $goods->id }}</th>
                                         <td>{{ \Str::limit($goods->name, 50) }}</td>
                                         <td>{{ \Str::limit($goods->description, 200) }}</td>
+                                        <div>
+                                            <a href="{{ action('Admin\GoodsController@edit', ['id' => $goods->id]) }}">編集</a>
+                                        </div>
                                     </tr>
                                 @endforeach
                             </tbody>

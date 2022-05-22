@@ -22,4 +22,6 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function(){
     Route::get('goods/create', 'Admin\GoodsController@add');
     Route::post('goods/create', 'Admin\GoodsController@create');
     Route::get('goods', 'Admin\GoodsController@index')->middleware('auth');
+    Route::get('goods/edit', 'Admin\GoodsController@edit')->middleware('auth');
+    Route::post('goods/edit', 'Admin\GoodsController@update')->middleware('auth');
 });

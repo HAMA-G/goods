@@ -26,9 +26,6 @@ class GoodsController extends Controller
         $goods = new Goods;
         $form = $request->all();
         
-        // var_dump($form);
-        // exit;
-        
         $goods->user_id = Auth::id();
         
         if(isset($form['image'])) {
@@ -37,8 +34,6 @@ class GoodsController extends Controller
         } else {
             $goods->image_path = null;
         }
-        
-        // $tags = $form['tags'];
         
         unset($form['_token']);
         unset($form['image']);
@@ -58,19 +53,57 @@ class GoodsController extends Controller
             }
         }
         
+        return redirect('admin/goods');
+    }
+    
+    public function edit(Request $request)
+    {
+        $goods = Goods::find($request->id);
+        if(empty($goods)) {
+            abort(404);
+        }
         
-        //動作確認のために設定している。今後はメインページに飛ぶように変える
-        return redirect('admin/goods/create');
+        $tags= Tag::all();
+        
+        return view('admin.goods.edit', ['goods_form' => $goods], ['tags' => $tags]);
     }
     
-    public function edit()
+    public function update(Request $request)
     {
-        return veiw('admin.goods.edit');
-    }
-    
-    public function update()
-    {
-        return redirect('admin/goods/index');
+        $this->validate($request, Goods::$rules);
+        $goods = Goods::find($request->id);
+        
+        $goods_form = $request->all();
+        
+        if($request->remove == 'true'){
+            $goods_form['image_path'] = null;
+        }elseif($request->file('image')){
+            $path = $request->file('image')->store('public/image');
+            $goods_form['image_path'] = basename($path);
+        }else{
+            $goods_form['image_path'] = $goods->image_path;
+        }
+        
+        
+        if($request->tags != null){
+            foreach($tags as $tag){
+                
+            }
+        }
+        
+        unset($goods_form['image']);
+        unset($goods_form['remove']);
+        unset($goods_form['_token']);
+        
+        $goods->fill($goods_form)->save;
+        
+        $tags = $request->tags;
+        foreach($tags as $tag) {
+            $goods_tag = GoodsTag::find($request->id);
+            $goods_tag->tag_id = $tag;
+        }
+        
+        return redirect('admin/goods');
     }
     
     public function index(Request $request)
