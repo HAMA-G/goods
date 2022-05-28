@@ -21,4 +21,22 @@ class Goods extends Model
     {
         return $this->hasMany('App\GoodsTag');
     }
+    
+    public function isCheckedTag($tag_id)
+    {
+        if($this->goods_tags()->where("tag_id", $tag_id)->first() != null){
+            return true;
+        } else{
+            return false;
+        }
+    }
+    
+    public function checkedTag($tag_id)
+    {
+        if($this->isCheckedTag($tag_id)){
+            return "checked";
+        }else{
+            return "";
+        }
+    }
 }

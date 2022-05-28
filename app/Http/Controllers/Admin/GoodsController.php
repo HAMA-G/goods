@@ -49,7 +49,6 @@ class GoodsController extends Controller
                 $goods_tag->goods_id = $goods->id;
                 $goods_tag->tag_id = $tag;
                 $goods_tag->save();
-                
             }
         }
         
@@ -65,7 +64,7 @@ class GoodsController extends Controller
         
         $tags= Tag::all();
         
-        return view('admin.goods.edit', ['goods_form' => $goods], ['tags' => $tags]);
+        return view('admin.goods.edit', ['goods_form' => $goods, 'tags' => $tags]);
     }
     
     public function update(Request $request)
@@ -84,36 +83,58 @@ class GoodsController extends Controller
             $goods_form['image_path'] = $goods->image_path;
         }
         
-        
-        if($request->tags != null){
-            foreach($tags as $tag){
-                
-            }
-        }
+        // requestでtagsがあった場合、新しいものを保存する
+        // tagsがなかった場合はそのまま
+        // 新しく追加された場合は、goods_idにtag_idを新しく紐付ける
+        // チェックをなくした場合は、goods_idとtag_idの紐付けを削除する
         
         unset($goods_form['image']);
         unset($goods_form['remove']);
         unset($goods_form['_token']);
+        unset($goods_form['tags']);
         
-        $goods->fill($goods_form)->save;
+        $goods->fill($goods_form)->save();
+        
+        $goods_tag = GoodsTag::find($request->id);
         
         $tags = $request->tags;
-        foreach($tags as $tag) {
-            $goods_tag = GoodsTag::find($request->id);
-            $goods_tag->tag_id = $tag;
+        if($tags != null && $goods_tag = goods_tags()->where("tag_id", $tag_id)->first() == null){
+            foreach($tags as $tag){
+                $goods_tag = new GoodsTag();
+                $goods_tag->goods_id = $goods->id;
+                $goods_tag->tag_id = $tag;
+                $goods_tag->save();
+            }
+        }elseif($tags != null && $goods_tag = goods_tags()->where("tag_id", $tag_id)->first() != null){
+            $goods_tag->save();
+        }elseif($tags == null && $goods_tag = goods_tags()->where("tag_id", $tag_id)->first() != null){
+                    $goods_tag = null;
+                    $goods_tag->save();
+        }else{
+            $goods_tag->save();
         }
-        
+            
         return redirect('admin/goods');
     }
     
     public function index(Request $request)
     {
-        $cond_title = $request->cond_title;
-        if($cond_title != ''){
-            $posts = Goods::where('title', $cond_title)->get();
+        $search = $request->search;
+        
+        if($search != ''){
+            if($request->sort == "desc"){
+                $posts = Goods::where('name','like', "%".$search."%")->orwhere('description', 'like', "%".$search."%")->orderBy("id", "desc")->get();
+            }else {
+                $posts = Goods::where('name','like', "%".$search."%")->orwhere('description', 'like', "%".$search."%")->orderBy("id", "asc")->get();
+            }
         }else {
-            $posts = Goods::all();
+            if($request->sort == "desc"){
+                $posts = Goods::orderBy("id", "desc")->get();
+            }else {
+                $posts = Goods::orderBy("id", "asc")->get();
+            }
         }
-        return view('admin.goods.index', ['posts' => $posts, 'cond_title' => $cond_title]);
+        
+        return view('admin.goods.index', ['posts'=>$posts, 'search'=>$search]);
     }
 }

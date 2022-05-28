@@ -20,7 +20,7 @@
                 <div class="row">
                     <div class="col-md-8 mx-auto">
                         <h2>グッズ編集</h2>
-                        <form action="{{ action('Admin\GoodsController@edit') }}" method="post" enctype="multipart/form-data">
+                        <form action="{{ action('Admin\GoodsController@update') }}" method="post" enctype="multipart/form-data">
                             @if (count($errors) > 0)
                                 <ul>
                                     @foreach($errors->all() as $e)
@@ -40,7 +40,7 @@
                             <div>
                                 <label>タグ</label><br>
                                 @foreach($tags as $tag)
-                                    <label><input type="checkbox" name="tags[]" value="{{ $tag->id }}"{{ $goods_tag->tag_id ==="{{ $tag->id }}" ? 'checked' : ''}} />{{ $tag->name }}</label><br>
+                                    <label><input type="checkbox" name="tags[]" value="{{ $tag->id }}" {{ $goods_form->checkedTag($tag->id) }}>{{ $tag->name }}</label><br>
                                 @endforeach
                             </div>
                             <div>
