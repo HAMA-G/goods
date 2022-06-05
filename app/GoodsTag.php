@@ -16,7 +16,12 @@ class GoodsTag extends Model
     
     public function tag()
     {
-        return $this->hasOne('App\Tag');
+        return $this->belongsTo('App\Tag');
+    }
+    
+    public function goods()
+    {
+        return $this->belongsTo('App\Goods');
     }
     
 }

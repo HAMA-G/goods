@@ -121,20 +121,47 @@ class GoodsController extends Controller
     {
         $search = $request->search;
         
-        if($search != ''){
+        $posts = null;
+        
+        $tags = Tag::all();
+        
+        if(!empty($search)){
             if($request->sort == "desc"){
-                $posts = Goods::where('name','like', "%".$search."%")->orwhere('description', 'like', "%".$search."%")->orderBy("id", "desc")->get();
+                $posts = Goods::where('user_id', Auth::id())
+                              ->where(function($query) use($search){$query->where('name','like', "%".$search."%")
+                              ->orwhere('description', 'like', "%".$search."%");})
+                              ->orderBy("id", "desc")->get();
             }else {
-                $posts = Goods::where('name','like', "%".$search."%")->orwhere('description', 'like', "%".$search."%")->orderBy("id", "asc")->get();
+                $posts = Goods::where('user_id', Auth::id())
+                              ->where(function($query) use($search){$query->where('name','like', "%".$search."%")
+                              ->orwhere('description', 'like', "%".$search."%");})
+                              ->orderBy("id", "asc")->get();
             }
-        }else {
+
+        }elseif(!empty($request->sort)){
             if($request->sort == "desc"){
-                $posts = Goods::orderBy("id", "desc")->get();
+                $posts = Goods::where('user_id', Auth::id())
+                              ->orderBy("id", "desc")->get();
             }else {
-                $posts = Goods::orderBy("id", "asc")->get();
+                $posts = Goods::where('user_id', Auth::id())
+                              ->orderBy("id", "asc")->get();
             }
         }
         
-        return view('admin.goods.index', ['posts'=>$posts, 'search'=>$search]);
+        //タグが指定されていた場合
+        if(!empty($request->tag)){
+        //グッズタグから指定されたものを取り出す
+            $goods_tag = goods_tags()->where('tag_id', $tag->id)->get();
+        //次にグッズタグから取り出されたものをグッズに指定する
+            $posts = Goods::where('id', $goods_tag->goods_id)->get();
+        }
+        
+        
+        
+        if($posts == null){
+            $posts = Goods::where('user_id', Auth::id())->get();
+        }
+        
+        return view('admin.goods.index', ['posts'=>$posts, 'search'=>$search, 'tags'=>$tags]);
     }
 }

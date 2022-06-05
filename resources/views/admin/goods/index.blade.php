@@ -25,8 +25,16 @@
                             <div>
                              <label>検索・ソート</label>
                                 <input type="text" name="search" value="{{ $search }}">
-                                <input type="radio" name="sort" value="asc">昇順
-                                <input type="radio" name="sort" value="desc">降順
+                                <div>
+                                    <input type="radio" name="sort" value="asc">昇順
+                                    <input type="radio" name="sort" value="desc">降順
+                                </div>
+                                <div>
+                                <label>タグ</label><br>
+                                    @foreach($tags as $tag)
+                                        <label><input type="checkbox" name="tags[]" value="{{ $tag->id }}">{{ $tag->name }}</label><br>
+                                    @endforeach
+                                </div>
                                 <input type="submit" value="実行">
                                 <button>
                                     <a href="{{action('Admin\GoodsController@index') }}">クリア</a>
@@ -42,6 +50,7 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>グッズ名</th>
+                                    <th>購入状況</th>
                                     <th>説明</th>
                                 </tr>
                             </thead>
@@ -50,6 +59,11 @@
                                     <tr>
                                         <th>{{ $goods->id }}</th>
                                         <td>{{ \Str::limit($goods->name, 50) }}</td>
+                                        {{--@if({{ $goods->status }} == "0")
+                                            <td>未購入</td>
+                                        @else({{ goods->status }} == "1")
+                                            <td>購入済み</td>
+                                        @endif--}}
                                         <td>{{ \Str::limit($goods->description, 200) }}</td>
                                         <td><a href="{{ action('Admin\GoodsController@edit', ['id' => $goods->id]) }}">編集</a></td>
                                     </tr>
