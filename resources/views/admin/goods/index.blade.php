@@ -24,7 +24,7 @@
                         <form action="{{ action('Admin\GoodsController@index') }}" method="get" enctype="multipart/form-data">
                             <div>
                              <label>検索・ソート</label>
-                                <input type="text" name="search" value="{{ $search }}">
+                                <input type="text" name="search" value="@if (isset($search)) {{ $search }} @endif">
                                 <div>
                                     <input type="radio" name="sort" value="asc">昇順
                                     <input type="radio" name="sort" value="desc">降順
@@ -59,11 +59,11 @@
                                     <tr>
                                         <th>{{ $goods->id }}</th>
                                         <td>{{ \Str::limit($goods->name, 50) }}</td>
-                                        {{--@if({{ $goods->status }} == "0")
-                                            <td>未購入</td>
-                                        @else({{ goods->status }} == "1")
-                                            <td>購入済み</td>
-                                        @endif--}}
+                                        {{--<td>@if({{ $goods->status }} == 0)
+                                            未購入
+                                        @elseif({{ $goods->status }} == 1)
+                                            購入済み
+                                        @endif</td>--}}
                                         <td>{{ \Str::limit($goods->description, 200) }}</td>
                                         <td><a href="{{ action('Admin\GoodsController@edit', ['id' => $goods->id]) }}">編集</a></td>
                                     </tr>

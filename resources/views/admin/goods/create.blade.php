@@ -40,7 +40,7 @@
                             <div>
                                 <label>タグ</label><br>
                                 @foreach($tags as $tag)
-                                    <label><input type="checkbox" name="tags[]" value="{{ $tag->id }}">{{ $tag->name }}</label><br>
+                                    <label><input type="checkbox" name="tags[]" value="{{ ($tag->id) }}" {{ old($tag->id) === "true" ? 'checked' : '' }}>{{ $tag->name }}</label><br>
                                 @endforeach
                             </div>
                             <div>

@@ -96,25 +96,26 @@ class GoodsController extends Controller
         $goods->fill($goods_form)->save();
         
         $goods_tag = GoodsTag::find($request->id);
+        var_dump($goods_tag);
         
-        $tags = $request->tags;
-        if($tags != null && $goods_tag = goods_tags()->where("tag_id", $tag_id)->first() == null){
-            foreach($tags as $tag){
-                $goods_tag = new GoodsTag();
-                $goods_tag->goods_id = $goods->id;
-                $goods_tag->tag_id = $tag;
-                $goods_tag->save();
-            }
-        }elseif($tags != null && $goods_tag = goods_tags()->where("tag_id", $tag_id)->first() != null){
-            $goods_tag->save();
-        }elseif($tags == null && $goods_tag = goods_tags()->where("tag_id", $tag_id)->first() != null){
-                    $goods_tag = null;
-                    $goods_tag->save();
-        }else{
-            $goods_tag->save();
-        }
+        // $tags = $request->tags;
+        // if($tags != null && $goods_tag->where("tag_id", $tag_id)->first() == null){
+        //     foreach($tags as $tag){
+        //         $goods_tag = new GoodsTag();
+        //         $goods_tag->goods_id = $goods->id;
+        //         $goods_tag->tag_id = $tag;
+        //         $goods_tag->save();
+        //     }
+        // }elseif($tags != null && $goods_tag->where("tag_id", $tag_id)->first() != null){
+        //     $goods_tag->save();
+        // }elseif($tags == null && $goods_tag->where("tag_id", $tag_id)->first() != null){
+        //             $goods_tag = null;
+        //             $goods_tag->save();
+        // }else{
+        //     $goods_tag->save();
+        // }
             
-        return redirect('admin/goods');
+        return redirect('admin/goods/create');
     }
     
     public function index(Request $request)
@@ -125,42 +126,73 @@ class GoodsController extends Controller
         
         $tags = Tag::all();
         
+        
         if(!empty($search)){
+            // 全角スペースを半角スペースに変換する
+            $spaceConversion = mb_convert_kana($search, 's');
+            // 単語を半角す～エスで区切り、配列にする
+            $wordArraySearched = preg_split('/[\s,]+/', $spaceConversion, -1, PREG_SPLIT_NO_EMPTY);
+            
             if($request->sort == "desc"){
-                $posts = Goods::where('user_id', Auth::id())
-                              ->where(function($query) use($search){$query->where('name','like', "%".$search."%")
-                              ->orwhere('description', 'like', "%".$search."%");})
-                              ->orderBy("id", "desc")->get();
+                $posts = Goods::where('user_id', Auth::id());
+                // 単語をループで回し、ユーザーネームと部分一致するものがあれば、$queryとして保存される
+                foreach($wordArraySearched as $search){
+                     $posts->where(function($query) use($search){$query->where('name','like', "%".$search."%")
+                                  ->orwhere('description', 'like', "%".$search."%");});
+                }
+                $posts->orderBy("id", "desc");
             }else {
-                $posts = Goods::where('user_id', Auth::id())
-                              ->where(function($query) use($search){$query->where('name','like', "%".$search."%")
-                              ->orwhere('description', 'like', "%".$search."%");})
-                              ->orderBy("id", "asc")->get();
+                $posts = Goods::where('user_id', Auth::id());
+                // 単語をループで回し、ユーザーネームと部分一致するものがあれば、$queryとして保存される
+                foreach($wordArraySearched as $search){
+                      $posts->where(function($query) use($search){$query->where('name','like', "%".$search."%")
+                      ->orwhere('description', 'like', "%".$search."%");});
+                }
+                $posts->orderBy("id", "asc");
             }
-
         }elseif(!empty($request->sort)){
             if($request->sort == "desc"){
                 $posts = Goods::where('user_id', Auth::id())
-                              ->orderBy("id", "desc")->get();
+                              ->orderBy("id", "desc");
             }else {
                 $posts = Goods::where('user_id', Auth::id())
-                              ->orderBy("id", "asc")->get();
+                              ->orderBy("id", "asc");
             }
         }
         
-        //タグが指定されていた場合
-        if(!empty($request->tag)){
-        //グッズタグから指定されたものを取り出す
-            $goods_tag = goods_tags()->where('tag_id', $tag->id)->get();
-        //次にグッズタグから取り出されたものをグッズに指定する
-            $posts = Goods::where('id', $goods_tag->goods_id)->get();
-        }
-        
-        
-        
         if($posts == null){
-            $posts = Goods::where('user_id', Auth::id())->get();
+            $posts = Goods::where('user_id', Auth::id());
         }
+        // var_dump($request->tags);
+        //タグが指定されていた場合
+        $goods_ids = [];
+        if(!empty($request->tags)){
+            $goods_tag = GoodsTag::whereIn('tag_id', $request->tags)->get();
+            foreach($goods_tag->groupBy('goods_id') as $id=>$v){
+                $goods_ids[] = $id;
+            }
+            var_dump($goods_ids);
+            
+            if(!empty($goods_ids)){
+                $posts = $posts->whereIn('id', $goods_ids); 
+            }else{
+                $posts = Goods::where('user_id', 0);
+            }
+        //グッズタグから指定されたものを取り出す
+        //     $goods_tag = goods_tags()->where('tag_id', $tag->id)->get();
+        //次にグッズタグから取り出されたものをグッズに指定する
+        //     $posts = Goods::where('id', $goods_tag->goods_id)->get();
+        }
+        
+        
+        $posts = $posts->get();
+        
+        
+        
+        
+        
+        
+        
         
         return view('admin.goods.index', ['posts'=>$posts, 'search'=>$search, 'tags'=>$tags]);
     }

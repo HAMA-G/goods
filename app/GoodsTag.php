@@ -16,12 +16,12 @@ class GoodsTag extends Model
     
     public function tag()
     {
-        return $this->belongsTo('App\Tag');
+        return $this->belongsTo('App\Tag')->first();
     }
     
     public function goods()
     {
-        return $this->belongsTo('App\Goods');
+        return $this->belongsTo('App\Goods', 'goods_id')->first();
     }
     
 }
