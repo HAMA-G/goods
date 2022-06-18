@@ -34,8 +34,8 @@
                             </div>
                             <div>
                                 <label>購入状況</label>
-                                    <input type="radio" name="status" value="1" {{ $goods_form->status === '1' ? 'checked' : '' }} />購入済み
-                                    <input type="radio" name="status" value="0" {{ $goods_form->status === '0' ? 'checked' : '' }} />未購入
+                                    <input type="radio" name="status" value="1" {{ $goods_form->status == "1" ? 'checked':'' }} />購入済み
+                                    <input type="radio" name="status" value="0" {{ $goods_form->status == "0" ? 'checked':'' }} />未購入
                             </div>
                             <div>
                                 <label>タグ</label><br>
@@ -51,7 +51,7 @@
                                 <label>商品画像</label>
                                     <input type="file" name="image">
                                     <div>
-                                        {{ $goods_form->image_path }}
+                                        <img src="{{ asset($goods_form->image_path) }}">
                                     </div>
                             </div>
                             <div>

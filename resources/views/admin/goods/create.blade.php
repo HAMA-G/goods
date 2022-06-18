@@ -34,8 +34,8 @@
                             </div>
                             <div>
                                 <label>購入状況</label>
-                                    <input type="radio" name="status" value="1" {{ old('status') === '1' ? 'checked' : '' }} />購入済み
-                                    <input type="radio" name="status" value="0" {{ old('status') === '0' ? 'checked' : '' }} />未購入
+                                    <input type="radio" name="status" value="1" {{ old('status') === 1 ? 'checked' : '' }} />購入済み
+                                    <input type="radio" name="status" value="0" {{ old('status') === 0 ? 'checked' : '' }} />未購入
                             </div>
                             <div>
                                 <label>タグ</label><br>
