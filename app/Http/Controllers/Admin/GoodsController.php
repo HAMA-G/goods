@@ -188,7 +188,6 @@ class GoodsController extends Controller
             foreach($goods_tag->groupBy('goods_id') as $id=>$v){
                 $goods_ids[] = $id;
             }
-            var_dump($goods_ids);
             
             if(!empty($goods_ids)){
                 $posts = $posts->whereIn('id', $goods_ids); 

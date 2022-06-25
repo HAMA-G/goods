@@ -51,7 +51,7 @@
                                 <label>商品画像</label>
                                     <input type="file" name="image">
                                     <div>
-                                        <img src="{{ asset($goods_form->image_path) }}">
+                                        <img src="{{ asset('storage/image/'.$goods_form->image_path) }}" style="width: 20%">
                                     </div>
                             </div>
                             <div>
