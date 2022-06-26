@@ -9,6 +9,7 @@ use App\Goods;
 use App\User;
 use App\Tag;
 use App\GoodsTag;
+use Storage;
 
 class GoodsController extends Controller
 {
@@ -29,8 +30,8 @@ class GoodsController extends Controller
         $goods->user_id = Auth::id();
         
         if(isset($form['image'])) {
-            $path = $request->file('image')->store('public/image');
-            $goods->image_path = basename($path);
+            $path = Storage::disk('s3')->putFile('/', $form['image'], 'public');
+            $goods->image_path = Storage::disk('s3')->url($path);
         } else {
             $goods->image_path = null;
         }
@@ -77,8 +78,8 @@ class GoodsController extends Controller
         if($request->remove == 'true'){
             $goods_form['image_path'] = null;
         }elseif($request->file('image')){
-            $path = $request->file('image')->store('public/image');
-            $goods_form['image_path'] = basename($path);
+            $path = Storage::disk('s3')->putFile('/', $goods_form['image'], 'public');
+            $goods->image_path = Storage::disk('s3')->url($path);
         }else{
             $goods_form['image_path'] = $goods->image_path;
         }
